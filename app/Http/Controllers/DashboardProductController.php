@@ -70,15 +70,8 @@ class DashboardProductController extends Controller
         $data['slug'] = Str::slug($request->name);
         $product = Product::create($data);
 
-        if(!isset($data['photo'])){
-            $gallery = [
-                'products_id' => $product->id,
-                'photos' => ''
-            ];    
-            Product_gallery::create($gallery);
-        }else{
+        if(isset($data['photo'])){
             $files = $request->file('photo');
-
             foreach ($files as $file) {
                 $gallery = [
                     'products_id' => $product->id,
@@ -104,6 +97,17 @@ class DashboardProductController extends Controller
 
         $product->update($data);
 
-        return redirect()->route('dashboard-product-detail', $product->id);
+        return redirect()->route('dashboard-product');
+    }
+
+    public function delete(Product $product){
+        foreach ($product->galleries as $gallery) {
+            $url = public_path('/storage/');
+            unlink($url . $gallery->photos);
+            $gallery->delete();
+        }
+
+        $product->delete();
+        return redirect()->route('dashboard-product');
     }
 }
