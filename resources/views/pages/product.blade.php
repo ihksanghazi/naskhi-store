@@ -40,10 +40,8 @@
               <input type="hidden" name="category" value="{{ request('category') }}">
             @endif
             <div class="row">
-              <div class="col-10">
+              <div class="col-12" style="display: flex;align-items: center;">
                 <input type="text" name="search" class="form-control" placeholder="Search">
-              </div>
-              <div class="col-2">
                 <button type="submit" class="btn btn-outline-dark">Search</button>
               </div>
             </div>

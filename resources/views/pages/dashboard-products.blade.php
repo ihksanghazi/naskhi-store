@@ -13,32 +13,26 @@
 		</div>
 		<div class="dashboard-content">
 			<div class="row">
-				<div class="col-12">
+				<div class="col-6">
 					<a
 						href="{{ route('dashboard-product-create') }}"
 						class="btn btn-success"
 						>Add New Product</a
 					>
 				</div>
+				<div class="col-6">
+					<form action="{{ route('dashboard-product') }}">
+						<div class="row">
+							<div class="col-10" style="display: flex;align-items: center;">
+								<input type="text" name="search" class="form-control" placeholder="Search">
+								<button type="submit" class="btn btn-outline-dark">Search</button>
+							</div>
+						</div>
+					</form>
+				</div>
 			</div>
 			<div class="row mt-4">
 				@foreach ($products as $product)
-					{{-- <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-						<a
-							href="{{ route('dashboard-product-detail',$product->id) }}"
-							class="card card-dashboard-product d-block"
-						>
-							<div class="card-body">
-								<img
-										src="{{ Storage::url($product->galleries->first()->photos ?? 'assets/products/nophoto.png') }}"
-										alt=""
-										class="w-100 mb-2"
-								/>
-								<div class="product-title">{{ $product->name }}</div>
-								<div class="product-category">{{ $product->category->name }}</div>
-							</div>
-						</a>
-					</div> --}}
 					@php
 						$incrementProduct=0;
 					@endphp
@@ -80,6 +74,11 @@
 
 				@endforeach
 			</div>
+			<div class="row">
+        <div class="col-12 mt-4">
+          {{ $products->links() }}
+        </div>
+      </div>
 		</div>
 	</div>
 </div>

@@ -17,7 +17,7 @@ class DashboardProductController extends Controller
     public function index(){
         return view('pages.dashboard-products',[
             'products' => Product::with(['galleries','category'])
-                            ->where('users_id',Auth::user()->id)->get()
+                            ->where('users_id',Auth::user()->id)->Filters(request(['search']))->paginate(8)->withQueryString()
         ]);
     }
 
