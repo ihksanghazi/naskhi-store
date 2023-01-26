@@ -52,7 +52,7 @@
 								<div class="row">
 									<div class="col-md-1">
 										<img
-												src="{{ Storage::url($transaction->product->galleries->first()->photos ?? '')}}"
+												src="{{ Storage::url($transaction->product->galleries->first()->photos ?? 'assets/products/nophoto.png')}}"
 												class="w-75"
 										/>
 									</div>

@@ -8,6 +8,8 @@
     />
     <meta name="description" content="" />
     <meta name="author" content="" />
+    <link rel="icon" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="manifest" href="/site.webmanifest">
 
     <title>@yield('title')</title>
 

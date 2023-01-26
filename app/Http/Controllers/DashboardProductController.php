@@ -32,6 +32,7 @@ class DashboardProductController extends Controller
 
     public function uploadGallery(Request $request){
         $data = $request->validate([
+            'products_id' => 'required',
             'photos' => 'file|image|max:1024'
         ]);
         
@@ -72,7 +73,7 @@ class DashboardProductController extends Controller
         if(!isset($data['photo'])){
             $gallery = [
                 'products_id' => $product->id,
-                'photos' => 'assets/products/nophoto.png'
+                'photos' => ''
             ];    
             Product_gallery::create($gallery);
         }else{
