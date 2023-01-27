@@ -66,6 +66,9 @@
             </a>
             <div class="dropdown-menu">
               <a href="{{ route('dashboard') }}" class="dropdown-item">Dashboard</a>
+              @can('isAdmin')
+                <a href="{{ route('admin-dashboard') }}" class="dropdown-item">Administrator</a>
+              @endcan
               <a href="{{ route('dashboard-setting-account') }}" class="dropdown-item"
                 >Settings</a
               >
@@ -104,6 +107,9 @@
             </a>
             <div class="dropdown-menu">
               <a href="{{ route('dashboard') }}" class="dropdown-item">Dashboard</a>
+              @can('isAdmin')
+                <a href="{{ route('admin-dashboard') }}" class="dropdown-item">Administrator</a>
+              @endcan
               <a href="{{ route('dashboard-setting-account') }}" class="dropdown-item"
                 >Settings</a
               >
