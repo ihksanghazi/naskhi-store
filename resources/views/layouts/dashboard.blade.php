@@ -143,7 +143,7 @@
                       Hi, {{ Auth::user()->name }}
                     </a>
                     <div class="dropdown-menu">
-                      <a href="{{ route('dashboard') }}" class="dropdown-item">Dashboard</a>
+                      <a href="{{ route('home') }}" class="dropdown-item">Beranda</a>
                       <a href="{{ route('dashboard-setting-account') }}" class="dropdown-item"
                         >Settings</a
                       >
