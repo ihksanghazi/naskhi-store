@@ -40,7 +40,7 @@ class DashboardProductController extends Controller
 
         Product_gallery::create($data);
 
-        return redirect()->route('dashboard-product-detail', $request->products_id);
+        return redirect()->back();
     }
 
     public function deleteGallery(Product_gallery $productGallery,Request $request){
@@ -48,7 +48,7 @@ class DashboardProductController extends Controller
         unlink($url . $productGallery->photos);
         $productGallery->delete();
 
-        return redirect()->route('dashboard-product-detail', $request->product_id);
+        return redirect()->back();
     }
 
     public function create(){

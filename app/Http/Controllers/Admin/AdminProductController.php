@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Product_gallery;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,38 +22,12 @@ class AdminProductController extends Controller
      */
     public function index()
     {
-
-        if(request()->ajax()){
-			$query = Product::with(['user','category']);
-			return DataTables::of($query)
-			->addColumn('action', function ($item){
-				return '
-						<div class="btn-group">
-							<div class="dropdown">
-								<button class="btn btn-primary dropdown-toggle mr-1 mb-1"
-                                    type="button"
-									data-toggle="dropdown">
-										Aksi
-								</button>
-								<div class="dropdown-menu">
-									<a class="dropdown-item" href="'.route('product.edit', $item->id).'">
-										Sunting
-									</a>
-									<form action="'. route('product.destroy', $item->id).'" method="post">
-										'.method_field('delete').csrf_field().'
-										<button type="submit" class="dropdown-item text-danger">
-											Hapus
-										</button>
-									</form>
-								</div>
-							</div>
-						</div>
-				';
-			})
-			->rawColumns(['action'])
-			->make();
-		}
-		return view('pages.admin.product.index');
+		return view('pages.admin.product.index',[
+            'products' => Product::with(['galleries','category'])
+                            ->Filters(request(['search','user']))->paginate(8)->withQueryString(),
+            'users' => User::all()
+        
+        ]);
     }
 
     /**
@@ -75,12 +50,30 @@ class AdminProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(AdminProductRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->all();
+        $data = $request->validate([
+            "users_id" => "required|exists:users,id",
+            "name" => "required|max:255",
+            "price" => "required|integer",
+            "categories_id" => "required|exists:categories,id",
+            "description" => "required",
+            "photo.*" => "required|file|image|max:1024"
+        ]);
+        
         $data['slug'] = Str::slug($request->name);
+        $product = Product::create($data);
 
-        Product::create($data);
+        if(isset($data['photo'])){
+            $files = $request->file('photo');
+            foreach ($files as $file) {
+                $gallery = [
+                    'products_id' => $product->id,
+                    'photos' => $file->store('assets/products','public')
+                ];    
+                Product_gallery::create($gallery);
+            }
+        }
 
         return redirect()->route('product.index');
     }
@@ -104,8 +97,10 @@ class AdminProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $product->with(['galleries','user','category'])->get();
+        // return dd($product);
         return view('pages.admin.product.edit',[
-            'item' => $product,
+            'product' => $product,
             'users' => User::all(),
             'categories' => Category::all()
         ]);
@@ -118,14 +113,20 @@ class AdminProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(AdminProductRequest $request, Product $product)
+    public function update(Request $request, Product $product)
     {
-        $data = $request->all();
+        $data = $request->validate([
+            "users_id" => "required|exists:users,id",
+            "name" => "required|max:255",
+            "price" => "required|integer",
+            "categories_id" => "required|exists:categories,id",
+            "description" => "required",
+        ]);
         $data['slug'] = Str::slug($request->name);
-         
+
         $product->update($data);
 
-        return redirect()->route('product.index');
+        return redirect()->back();
     }
 
     /**
@@ -136,8 +137,13 @@ class AdminProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product->delete();
+        foreach ($product->galleries as $gallery) {
+            $url = public_path('/storage/');
+            unlink($url . $gallery->photos);
+            $gallery->delete();
+        }
 
+        $product->delete();
         return redirect()->route('product.index');
     }
 }

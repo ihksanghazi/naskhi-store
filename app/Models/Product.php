@@ -33,6 +33,12 @@ class Product extends Model
                 return $query->where('slug', $category);
             });
         });
+
+        $query->when($filters['user'] ?? false, function($query,$user){
+            $query->whereHas('user', function($query) use($user){
+                return $query->where('id', $user);
+            });
+        });
     }
 
     public function galleries(){
